@@ -11,7 +11,7 @@ const publicProcedure = t.procedure;
 const DEFAULT_SIZE = 10;
 
 const messages: ChatMessage[] = [
-  ...Array.from({ length: 100 }, (_, i) => ({
+  ...Array.from({ length: 10 }, (_, i) => ({
     user: `user${i}`,
     message: `message${i}`,
   })),

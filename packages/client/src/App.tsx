@@ -1,5 +1,5 @@
 import "./index.scss";
-import React from "react";
+import React, { useCallback } from "react";
 import ReactDOM from "react-dom";
 import { httpBatchLink } from "@trpc/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -10,14 +10,24 @@ const queryClient = new QueryClient();
 
 const AppContent = () => {
   const hello = trpc.hi.useQuery();
-  const messages = trpc.getMessage.useQuery();
+  const messages = trpc.getMessage.useQuery({ size: 11 });
+  const addMessage = trpc.addMessage.useMutation();
 
-  console.log("Messages", messages.data);
+  const handleAddMessage = useCallback(() => {
+    addMessage.mutate({
+      user: "migueljo",
+      message: "Hello from the client",
+    });
+  }, []);
 
   return (
     <div className="mt-10 text-3xl mx-auto max-w-6xl">
       <p>{JSON.stringify(hello.data, null, 2)}</p>
       {JSON.stringify(messages.data, null, 2)}
+      <br />
+      <button type="button" onClick={handleAddMessage}>
+        Add new message
+      </button>
     </div>
   );
 };
