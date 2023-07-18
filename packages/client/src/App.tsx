@@ -57,8 +57,14 @@ const AppContent = () => {
         Add new message
       </button>
       <br />
-      <p>{JSON.stringify(hello.data, null, 2)}</p>
-      <p>{JSON.stringify(messages.data, null, 2)}</p>
+      <div>
+        <p>List</p>
+        {messages.data?.map((message) => (
+          <div key={message.message}>
+            {message.user}: {message.message}
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
