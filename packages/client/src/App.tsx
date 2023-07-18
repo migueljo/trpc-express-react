@@ -2,22 +2,37 @@ import "./index.scss";
 import React, { useCallback } from "react";
 import ReactDOM from "react-dom";
 import { httpBatchLink } from "@trpc/client";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import {
+  QueryClient,
+  QueryClientProvider,
+  useQueryClient,
+} from "@tanstack/react-query";
 
 import { trpc } from "./trpc";
+import { getQueryKey } from "@trpc/react-query";
 
 const queryClient = new QueryClient();
 
 const AppContent = () => {
+  const client = useQueryClient();
   const hello = trpc.hi.useQuery();
-  const messages = trpc.getMessage.useQuery({ size: 11 });
+  const messages = trpc.getMessage.useQuery({ size: 100 });
   const addMessage = trpc.addMessage.useMutation();
 
+  console.log("Key", getQueryKey(trpc.getMessage));
+
   const handleAddMessage = useCallback(() => {
-    addMessage.mutate({
-      user: "migueljo",
-      message: "Hello from the client",
-    });
+    addMessage.mutate(
+      {
+        user: "migueljo",
+        message: "Ciao! 6",
+      },
+      {
+        onSuccess: async () => {
+          await client.invalidateQueries(getQueryKey(trpc.getMessage));
+        },
+      }
+    );
   }, []);
 
   return (
