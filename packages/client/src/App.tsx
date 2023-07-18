@@ -1,5 +1,5 @@
 import "./index.scss";
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import ReactDOM from "react-dom";
 import { httpBatchLink } from "@trpc/client";
 import {
@@ -18,14 +18,16 @@ const AppContent = () => {
   const hello = trpc.hi.useQuery();
   const messages = trpc.getMessage.useQuery({ size: 100 });
   const addMessage = trpc.addMessage.useMutation();
+  const [user, setUser] = useState("");
+  const [message, setMessage] = useState("");
 
   console.log("Key", getQueryKey(trpc.getMessage));
 
   const handleAddMessage = useCallback(() => {
     addMessage.mutate(
       {
-        user: "migueljo",
-        message: "Ciao! 6",
+        user,
+        message,
       },
       {
         onSuccess: async () => {
@@ -36,13 +38,27 @@ const AppContent = () => {
   }, []);
 
   return (
-    <div className="mt-10 text-3xl mx-auto max-w-6xl">
-      <p>{JSON.stringify(hello.data, null, 2)}</p>
-      {JSON.stringify(messages.data, null, 2)}
-      <br />
+    <div className="mt-10 text-3xl mx-auto max-w-6xl p-10">
+      <input
+        type="text"
+        value={user}
+        onChange={(e) => setUser(e.target.value)}
+        className="p-5 border-2 border-gray-300 rounded-lg w-full mb-5"
+        placeholder="User"
+      />
+      <input
+        type="text"
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
+        className="p-5 border-2 border-gray-300 rounded-lg w-full mb-5"
+        placeholder="Message"
+      />
       <button type="button" onClick={handleAddMessage}>
         Add new message
       </button>
+      <br />
+      <p>{JSON.stringify(hello.data, null, 2)}</p>
+      <p>{JSON.stringify(messages.data, null, 2)}</p>
     </div>
   );
 };
